@@ -9,6 +9,7 @@ BASE_BRANCH=${BASE_BRANCH}
 MAIN_BRANCH=${MAIN_BRANCH}
 PR_LIMIT=${PR_LIMIT:-40}
 FETCH_DEPTH=${FETCH_DEPTH:-300}
+MERGE_COMMIT_DEPTH=${MERGE_COMMIT_DEPTH:-3}
 
 # First, fetch the necessary Git history
 echo "Fetching Git history..."
@@ -28,7 +29,7 @@ fi
 # find commit range to check for Linear issue IDs
 echo "Finding commit range..."
 last_merge_commit=$(git log origin/$MAIN_BRANCH --merges -n 1 --pretty=format:"%H")
-second_last_merge_commit=$(git log origin/$MAIN_BRANCH --merges -n 2 --pretty=format:"%H" | tail -n 1)
+second_last_merge_commit=$(git log origin/$MAIN_BRANCH --merges -n $MERGE_COMMIT_DEPTH --pretty=format:"%H" | tail -n 1)
 
 if [[ -z "$last_merge_commit" || -z "$second_last_merge_commit" ]]; then
   echo "Could not find necessary merge commits. Ensure the repository has enough history."

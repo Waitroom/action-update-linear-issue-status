@@ -17,13 +17,17 @@ inputs:
   base_branch:
     description: "Base branch for release branch"
     required: true
+  fetch_depth:
+    description: "Number of commits to fetch. Default to 300"
+    default: "300"
+    required: false
   pr_limit:
     description: "Number of github PRs to fetch. Default to 40"
     default: "40"
     required: false
-  fetch_depth:
-    description: "Number of commits to fetch. Default to 300"
-    default: "300"
+  merge_commit_depth:
+    description: "Number of github merge commits in main_branch to linear id lookup. Default to 2. Be careful when setting more than 4" 
+    default: "2"
     required: false
   dry_run:
     description: "Whether to run in dry-run mode"
@@ -43,4 +47,5 @@ runs:
         BASE_BRANCH: ${{ inputs.base_branch }}
         FETCH_DEPTH: ${{ inputs.fetch_depth }}
         PR_LIMIT: ${{ inputs.pr_limit }}
+        MERGE_COMMIT_DEPTH: ${{ inputs.merge_commit_depth }}
         DRY_RUN: ${{ inputs.dry_run }}
