@@ -29,7 +29,7 @@ runs:
   using: "composite"
   steps:
     - name: Run update_linear_issue_status.sh
-      run: ./update_linear_issue_status.sh
+      run: ${{ github.action_path }}/update_linear_issue_status.sh
       shell: bash
       env:
         LINEAR_API_TOKEN: ${{ inputs.linear_api_token }}
