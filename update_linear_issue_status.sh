@@ -8,11 +8,12 @@ TO_STATUS_ID=${TO_STATUS_ID}
 BASE_BRANCH=${BASE_BRANCH}
 MAIN_BRANCH=${MAIN_BRANCH}
 PR_LIMIT=${PR_LIMIT:-40}
+FETCH_DEPTH=${FETCH_DEPTH:-300}
 
 # First, fetch the necessary Git history
 echo "Fetching Git history..."
-git fetch origin $MAIN_BRANCH --depth=100
-git fetch origin $BASE_BRANCH --depth=100
+git fetch origin $MAIN_BRANCH --depth=$FETCH_DEPTH
+git fetch origin $BASE_BRANCH --depth=$FETCH_DEPTH
 
 # Get the latest merged PRs merged into the $BASE_BRANCH branch
 echo "Fetching latest PRs merged into $BASE_BRANCH branch..."

@@ -21,6 +21,10 @@ inputs:
     description: "Number of github PRs to fetch. Default to 40"
     default: "40"
     required: false
+  fetch_depth:
+    description: "Number of commits to fetch. Default to 300"
+    default: "300"
+    required: false
   dry_run:
     description: "Whether to run in dry-run mode"
     default: "true"
@@ -37,5 +41,6 @@ runs:
         TO_STATUS_ID: ${{ inputs.to_state_id }}
         MAIN_BRANCH: ${{ inputs.main_branch }}
         BASE_BRANCH: ${{ inputs.base_branch }}
+        FETCH_DEPTH: ${{ inputs.fetch_depth }}
         PR_LIMIT: ${{ inputs.pr_limit }}
         DRY_RUN: ${{ inputs.dry_run }}
