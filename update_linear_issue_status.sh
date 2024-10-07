@@ -9,6 +9,11 @@ BASE_BRANCH=${BASE_BRANCH}
 MAIN_BRANCH=${MAIN_BRANCH}
 PR_LIMIT=${PR_LIMIT:-40}
 
+# First, fetch the necessary Git history
+echo "Fetching Git history..."
+git fetch origin $MAIN_BRANCH --depth=100
+git fetch origin $BASE_BRANCH --depth=100
+
 # Get the latest merged PRs merged into the $BASE_BRANCH branch
 echo "Fetching latest PRs merged into $BASE_BRANCH branch..."
 pr_list=$(gh pr list --base $BASE_BRANCH --state merged --json number,headRefName --limit $PR_LIMIT)
@@ -20,10 +25,14 @@ if [[ -z "$pr_list" ]]; then
 fi
 
 # find commit range to check for Linear issue IDs
-# This script is supposed to run right after $MAIN_BRANCH is merged with a merge commit
-# So in that case take the last 2 commits as the range
-last_merge_commit=$(git log $MAIN_BRANCH --merges -n 1 --pretty=format:"%H")
-second_last_merge_commit=$(git log $MAIN_BRANCH --merges -n 2 --pretty=format:"%H" | tail -n 1)
+echo "Finding commit range..."
+last_merge_commit=$(git log origin/$MAIN_BRANCH --merges -n 1 --pretty=format:"%H")
+second_last_merge_commit=$(git log origin/$MAIN_BRANCH --merges -n 2 --pretty=format:"%H" | tail -n 1)
+
+if [[ -z "$last_merge_commit" || -z "$second_last_merge_commit" ]]; then
+  echo "Could not find necessary merge commits. Ensure the repository has enough history."
+  exit 1
+fi
 
 # Extract branch names and corresponding Linear issue IDs
 echo "Extracting Linear issue identifier numbers from branch names..."
@@ -42,7 +51,7 @@ for row in $(echo "${pr_list}" | jq -r '.[] | @base64'); do
   pr_number=$(_jq '.number')
 
   # Find the commit related to the PR number within the valid commit range
-  commit_sha=$(git log $MAIN_BRANCH --grep "(#$pr_number)" --format="%H" --reverse $second_last_merge_commit..$last_merge_commit | head -n 1)
+  commit_sha=$(git log origin/$MAIN_BRANCH --grep "(#$pr_number)" --format="%H" --reverse $second_last_merge_commit..$last_merge_commit | head -n 1)
 
   # If the commit is found, proceed to extract the Linear issue ID number
   if [[ ! -z "$commit_sha" ]]; then
