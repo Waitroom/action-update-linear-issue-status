@@ -27,7 +27,7 @@ inputs:
     required: false
   merge_commit_depth:
     description: "Number of github merge commits in main_branch to linear id lookup. Default to 2. Be careful when setting more than 4" 
-    default: "2"
+    default: "3"
     required: false
   dry_run:
     description: "Whether to run in dry-run mode"
